@@ -1,4 +1,5 @@
 require 'net/http'
+require 'httparty'
 
 # Handles GET request
 class JsonParser
@@ -11,6 +12,9 @@ class JsonParser
   private
 
   def get_body_from_uri(uri)
-    Net::HTTP.get_response(URI.parse(uri)).body
+    HTTParty.get(uri,
+                 headers: {
+                   Authorization: 'abc123'
+                 }).body
   end
 end
