@@ -1,4 +1,3 @@
-#require 'byebug'
 require 'spec_helper'
 require_relative '../bin/main'
 
