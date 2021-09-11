@@ -12,9 +12,6 @@ class JsonParser
   private
 
   def get_from_uri(uri, auth)
-    request = HTTParty.get(uri,
-                 headers: {
-                   Authorization: auth
-                 })
+    HTTParty.get(uri, headers: { Authorization: auth })
   end
 end

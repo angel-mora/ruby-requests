@@ -11,12 +11,13 @@ describe JsonParser do
     end
 
     it 'reads provided URI with auth header' do
-      stub_request(:get, 'https://test-users-2020.herokuapp.com/api/users').
-        with(
+      stub_request(:get, 'https://test-users-2020.herokuapp.com/api/users')
+        .with(
           headers: {
             Authorization: 'abc123'
-          }).
-        to_return(status: 200)
+          }
+        )
+        .to_return(status: 200)
       authenticated = JsonParser.new('https://test-users-2020.herokuapp.com/api/users', 'abc123')
       expect(authenticated.parsed_json.code).to eq(200)
     end
