@@ -3,18 +3,18 @@ require 'httparty'
 
 # Handles GET request
 class JsonParser
-  attr_accessor :json_body
+  attr_accessor :parsed_json
 
-  def initialize(uri)
-    @json_body = get_body_from_uri(uri)
+  def initialize(uri, auth)
+    @parsed_json = get_from_uri(uri, auth)
   end
 
   private
 
-  def get_body_from_uri(uri)
-    HTTParty.get(uri,
+  def get_from_uri(uri, auth)
+    request = HTTParty.get(uri,
                  headers: {
-                   Authorization: 'abc123'
-                 }).body
+                   Authorization: auth
+                 })
   end
 end
