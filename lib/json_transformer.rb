@@ -35,6 +35,7 @@ class JsonTransformer
     @merged << row[0] if valid?(row[0])
   end
 
+  # Check if the row has repetition and deliver to merge accordingly
   def collect_cleaned
     @exportable.each do |row|
       reduce_repeated(row) if row.length > 1
@@ -49,6 +50,7 @@ class JsonTransformer
       .map { |unique_user| @exportable << unique_user[1].map(&:merge!) }
   end
 
+  # Handle json core actions
   def transform
     remove_duplicates(@json_body)
     collect_cleaned
@@ -59,7 +61,7 @@ class JsonTransformer
     arr_of_hashes.sort_by! { |hash| hash['lastName'] }
   end
 
-  # export new json locally
+  # Export new json locally
   def export(json_file)
     File.open('./transformed.json', 'w+') do |file|
       JSON.dump(json_file, file)
