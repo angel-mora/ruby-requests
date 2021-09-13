@@ -7,6 +7,10 @@ class JsonTransformer
     @json_body = JSON.parse(requested)
   end
 
+  def format(arg)
+    arg.gsub(/\D/, '').insert(0,'(').insert(4,')').insert(5,' ').insert(9, '-')
+  end
+
   def valid?(arg)
     mail = !!arg['email'].gsub(' ','').match(URI::MailTo::EMAIL_REGEXP)
     phone = arg['phone'].gsub(/\D/, '').length == 10
@@ -28,21 +32,21 @@ class JsonTransformer
       if repeated.length > 1
         repeated.reduce do |first, second|
           first['moreData'] = first['moreData'].merge(second['moreData']) unless second['moreData'].nil?
-          first['phone'] = first['moreData']['phone'] if first['phone'].nil?
+          first['phone'] = format(first['moreData']['phone']) if first['phone'].nil?
           first['moreData'].delete('phone')
           @merged << first if valid?(first)
         end
       else
         unique = repeated[0]
         if unique['phone'].nil? && unique['moreData']['phone']
-          unique['phone'] = unique['moreData']['phone']
+          unique['phone'] = format(unique['moreData']['phone'])
           unique['moreData'].delete('phone')
           @merged << unique if valid?(unique)
         end
       end
     end
-    p @merged
-    byebug
+    sort_by_last_name(@merged)
+    @merged
   end
 
   def set_properly; end
@@ -55,8 +59,8 @@ class JsonTransformer
     #end
   end
 
-  def sort_by_last_name
-    # sort alphabetically
+  def sort_by_last_name(arr_of_hashes)
+    arr_of_hashes.sort_by {|hash| hash['lastName']}
   end
 
   def export
