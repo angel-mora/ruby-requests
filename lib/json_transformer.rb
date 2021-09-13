@@ -67,4 +67,9 @@ class JsonTransformer
       JSON.dump(json_file, file)
     end
   end
+
+  def loadable?(path)
+    file = File.open(path)
+    JSON.load(file)
+  end
 end
