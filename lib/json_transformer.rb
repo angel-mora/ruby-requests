@@ -4,6 +4,7 @@ class JsonTransformer
   def initialize(requested)
     @json_body = JSON.parse(requested)
     @exportable = []
+    @merged = []
   end
 
   def format(arg)
@@ -21,36 +22,36 @@ class JsonTransformer
     user_hash['moreData'].delete('phone')
   end
 
-  def remove_duplicates(array_of_hashes)
-    @merged = []
-    array_of_hashes.group_by { |user| user['firstName'] && user['lastName'] }
-      .map do |unique_user|
-        unique_user = unique_user[1].map(&:merge!)
-        @exportable << unique_user
-      end
-    @exportable.each do |repeated|
-      if repeated.length > 1
-        repeated.reduce do |first, second|
-          first['moreData'] = first['moreData'].merge(second['moreData']) unless second['moreData'].nil?
-          arrange_phone_of(first)
-          @merged << first if valid?(first)
-        end
-      else
-        unique = repeated[0]
-        if unique['phone'].nil? && unique['moreData']['phone']
-          arrange_phone_of(unique)
-          @merged << unique if valid?(unique)
-        end
-      end
+  def reduce_repeated(row)
+    row.reduce do |first, second|
+      first['moreData'] = first['moreData'].merge(second['moreData']) unless second['moreData'].nil?
+      arrange_phone_of(first)
+      @merged << first if valid?(first)
+    end
+  end
+
+  def send_unique(row)
+    arrange_phone_of(row[0])
+    @merged << row[0] if valid?(row[0])
+  end
+
+  def collect_cleaned
+    @exportable.each do |row|
+      reduce_repeated(row) if row.length > 1
+      send_unique(row) if row[0]['phone'].nil? && row[0]['moreData']['phone']
     end
     sort_by_last_name(@merged)
     @merged
   end
 
-  def set_properly; end
+  def remove_duplicates(array_of_hashes)
+    array_of_hashes.group_by { |user| user['firstName'] && user['lastName'] }
+      .map { |unique_user| @exportable << unique_user[1].map(&:merge!) }
+  end
 
   def transform
     remove_duplicates(@json_body)
+    collect_cleaned
     export(@merged)
   end
 
@@ -68,6 +69,6 @@ class JsonTransformer
   def loadable?(path)
     file = File.open(path)
     # Using JSON.parse instead of JSON.load for security purposes
-    JSON.load(file)
+    JSON.parse(file)
   end
 end
