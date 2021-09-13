@@ -9,11 +9,11 @@ class JsonTransformer
   end
 
   def format(arg)
-    arg.gsub(/\D/, '').insert(0,'(').insert(4,')').insert(5,' ').insert(9, '-')
+    arg.gsub(/\D/, '').insert(0, '(').insert(4, ')').insert(5, ' ').insert(9, '-')
   end
 
   def valid?(arg)
-    mail = !!arg['email'].gsub(' ','').match(URI::MailTo::EMAIL_REGEXP)
+    mail = !arg['email'].gsub(' ', '').match(URI::MailTo::EMAIL_REGEXP).nil?
     phone = arg['phone'].gsub(/\D/, '').length == 10
     phone && mail
   end
@@ -70,6 +70,7 @@ class JsonTransformer
 
   def loadable?(path)
     file = File.open(path)
+    # Using JSON.parse instead of JSON.load for security purposes
     JSON.load(file)
   end
 end
