@@ -7,6 +7,7 @@ describe JsonTransformer do
   let(:json_data) { JSON.parse(file) }
   let(:transformed) { './transformed.json' }
   let(:class_instance) { JsonTransformer.new(json_data.to_json) }
+
   describe '#initialize' do
     it 'gets the json body' do
       expect(class_instance.json_body).to be_a_kind_of(Array)
@@ -37,20 +38,12 @@ describe JsonTransformer do
     end
   end
 
-  describe '#remove_duplicates' do
-    it 'merges users with same first and last names'
-  end
-
-  describe '#set_properly' do
-    it 'takes phone data one level up'
-  end
-
-  describe '#transform' do
-    it 'executes json cleaning properly'
-  end
-
-  describe '#export' do
-    it "can't export if no valid users"
-    it 'exports properly'
+  describe '#collect_cleaned' do
+    let(:repeated) { [{"firstName"=>"Vial", "lastName"=>"Riobard", "email"=>"vial@calderon.bollay.com", "moreData"=>{"phone"=>"(750) 500-9253", "joceline"=>"kwasi"}}, {"firstName"=>"Vial", "lastName"=>"Riobard", "moreData"=>{"phone"=>"(750) 500-9253", "oceline"=>"wasi"}}] }
+    let(:merged) { [{"firstName"=>"Vial", "lastName"=>"Riobard", "email"=>"vial@calderon.bollay.com", "moreData"=>{"joceline"=>"kwasi", "oceline"=>"wasi"}, "phone"=>"(750) 500-9253"}] }
+    let(:unique) { [{"firstName"=>"Garfield", "lastName"=>"Root", "email"=>"garfield@golda.secunda.com", "moreData"=>{"phone"=>"(983) 896-2295", "baptiste"=>"koziarz"}}] }
+    it 'merges users with same first and last names' do
+      expect(class_instance.collect_cleaned).to eql(merged)
+    end
   end
 end
