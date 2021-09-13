@@ -16,7 +16,7 @@ describe JsonTransformer do
     it 'validates firstName'
     it 'validates lastName'
     it 'validates email or phone present' do
-      it 'considers both parenthesized and plain number'
+      # it 'considers both parenthesized and plain number'
     end
   end
 
