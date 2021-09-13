@@ -1,5 +1,3 @@
-require 'byebug'
-
 class JsonTransformer
   attr_reader :json_body
 
@@ -18,30 +16,29 @@ class JsonTransformer
     phone && mail
   end
 
+  def arrange_phone_of(user_hash)
+    user_hash['phone'] = format(user_hash['moreData']['phone'])
+    user_hash['moreData'].delete('phone')
+  end
+
   def remove_duplicates(array_of_hashes)
-    # remove duplicates
-    # @exportable = []
     @merged = []
-    grouped = array_of_hashes.group_by do |user|
-      user['firstName'] && user['lastName']
-    end
-    grouped.map do |unique_user|
-      unique_user = unique_user[1].map(&:merge!)
-      @exportable << unique_user
-    end
+    array_of_hashes.group_by { |user| user['firstName'] && user['lastName'] }
+      .map do |unique_user|
+        unique_user = unique_user[1].map(&:merge!)
+        @exportable << unique_user
+      end
     @exportable.each do |repeated|
       if repeated.length > 1
         repeated.reduce do |first, second|
           first['moreData'] = first['moreData'].merge(second['moreData']) unless second['moreData'].nil?
-          first['phone'] = format(first['moreData']['phone']) if first['phone'].nil?
-          first['moreData'].delete('phone')
+          arrange_phone_of(first)
           @merged << first if valid?(first)
         end
       else
         unique = repeated[0]
         if unique['phone'].nil? && unique['moreData']['phone']
-          unique['phone'] = format(unique['moreData']['phone'])
-          unique['moreData'].delete('phone')
+          arrange_phone_of(unique)
           @merged << unique if valid?(unique)
         end
       end
