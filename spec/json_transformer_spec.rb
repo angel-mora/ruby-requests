@@ -3,20 +3,37 @@ require_relative '../bin/main'
 require 'byebug'
 
 describe JsonTransformer do
+  let(:file) { File.read('./spec/transformable.json') }
+  let(:json_data) { JSON.parse(file) }
+  let(:transformed) { './transformed.json' }
+  let(:class_instance) { JsonTransformer.new(json_data.to_json) }
   describe '#initialize' do
     it 'gets the json body' do
-      file = File.read('./spec/transformable.json')
-      json_data = JSON.parse(file)
-      requested = JsonTransformer.new(json_data.to_json)
-      expect(requested.json_body).to be_a_kind_of(Array)
+      expect(class_instance.json_body).to be_a_kind_of(Array)
     end
   end
 
   describe '#valid?' do
-    it 'validates firstName'
-    it 'validates lastName'
-    it 'validates email or phone present' do
-      # it 'considers both parenthesized and plain number'
+    let(:valid_input) do
+      {
+        'firstName' => 'Vial',
+        'lastName' => 'Riobard',
+        'email' => 'vial@calderon.bollay.com',
+        'moreData' => { 'joceline' => 'kwasi', 'oceline' => 'wasi' },
+        'phone' => '(750) 500-9253'
+      }
+    end
+    let(:invalid_input) do
+      {
+        'firstName' => 'Vial',
+        'lastName' => 'Riobard'
+      }
+    end
+    it 'accept valid argument' do
+      expect(class_instance.valid?(valid_input)).to be(true)
+    end
+    it 'reject invalid input' do
+      expect(class_instance.valid?(invalid_input)).to be(false)
     end
   end
 

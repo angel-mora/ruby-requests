@@ -1,3 +1,4 @@
+require 'byebug'
 class JsonTransformer
   attr_reader :json_body
 
@@ -12,6 +13,7 @@ class JsonTransformer
   end
 
   def valid?(arg)
+    # byebug
     mail = !arg['email'].gsub(' ', '').match(URI::MailTo::EMAIL_REGEXP).nil?
     phone = arg['phone'].gsub(/\D/, '').length == 10
     phone && mail
