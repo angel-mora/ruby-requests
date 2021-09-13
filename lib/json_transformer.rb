@@ -14,9 +14,9 @@ class JsonTransformer
 
   def valid?(arg)
     # byebug
-    mail = !arg['email'].gsub(' ', '').match(URI::MailTo::EMAIL_REGEXP).nil?
-    phone = arg['phone'].gsub(/\D/, '').length == 10
-    phone && mail
+    mail = !arg['email'].gsub(' ', '').match(URI::MailTo::EMAIL_REGEXP).nil? if arg['email']
+    phone = arg['phone'].gsub(/\D/, '').length == 10 unless arg['phone'].nil?
+    phone && mail ? true : false
   end
 
   def arrange_phone_of(user_hash)
