@@ -29,7 +29,7 @@ class JsonTransformer
       @merged << first if valid?(first)
     end
   end
-  
+
   def send_unique(row)
     arrange_phone_of(row[0])
     @merged << row[0] if valid?(row[0])
