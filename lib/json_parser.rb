@@ -3,7 +3,7 @@ require 'httparty'
 
 # Handles GET request
 class JsonParser
-  attr_accessor :parsed_json
+  attr_reader :parsed_json
 
   def initialize(uri, auth)
     @parsed_json = get_from_uri(uri, auth)
