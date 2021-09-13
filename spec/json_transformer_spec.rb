@@ -7,7 +7,7 @@ describe JsonTransformer do
     it 'gets the json body' do
       file = File.read('./spec/transformable.json')
       json_data = JSON.parse(file)
-      requested = JsonTransformer.new(json_data)
+      requested = JsonTransformer.new(json_data.to_json)
       expect(requested.json_body).to be_a_kind_of(Array)
     end
   end

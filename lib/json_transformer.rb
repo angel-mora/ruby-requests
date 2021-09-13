@@ -52,7 +52,7 @@ class JsonTransformer
   def set_properly; end
 
   def transform
-    remove_duplicates(@json_body)
+    #remove_duplicates(@json_body)
     #@json_body.each do |user|
       #user.set_properly if user.valid?
       #@exportable << user
