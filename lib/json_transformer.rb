@@ -5,6 +5,7 @@ class JsonTransformer
 
   def initialize(requested)
     @json_body = JSON.parse(requested)
+    @exportable = []
   end
 
   def format(arg)
@@ -19,7 +20,7 @@ class JsonTransformer
 
   def remove_duplicates(array_of_hashes)
     # remove duplicates
-    @exportable = []
+    # @exportable = []
     @merged = []
     grouped = array_of_hashes.group_by do |user|
       user['firstName'] && user['lastName']
@@ -52,19 +53,18 @@ class JsonTransformer
   def set_properly; end
 
   def transform
-    #remove_duplicates(@json_body)
-    #@json_body.each do |user|
-      #user.set_properly if user.valid?
-      #@exportable << user
-    #end
+    remove_duplicates(@json_body)
+    export(@merged)
   end
 
   def sort_by_last_name(arr_of_hashes)
-    arr_of_hashes.sort_by {|hash| hash['lastName']}
+    arr_of_hashes.sort_by! { |hash| hash['lastName'] }
   end
 
-  def export
-    # export new json locally
-    # Json.dump(@exportable)
+  # export new json locally
+  def export(json_file)
+    File.open('./transformed.json', 'w+') do |file|
+      JSON.dump(json_file, file)
+    end
   end
 end
